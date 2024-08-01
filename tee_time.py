@@ -13,7 +13,14 @@ COURSE_ID = userconfig[3]
 SCHEDULE_ID = userconfig[4]
 # COURSE ABBREVIATION = userconfig[4]
 
-# building URL constants from userconfig.txt to determine which course you want to book at
+# user parameters for finding specific tee times
+# TODO: we will move this to a preferences/modifiable user config system later, set predefined vals for now
+HOLES = 18
+AVAILABLE_SPOTS = 1
+MAX_PLAYERS = 4
+
+
+# building URL constants from userconfig.txt to determine which course to book at
 LOGIN_URL = WEBSITE+"/index.php/api/booking/users/login"
 
 # old, keeping here just incase. payload in userLogin contains course_id instead
@@ -51,7 +58,7 @@ def userLogin(username, password):
         print(f"An error occurred: {req_err}")
 
 def getOpenTeeTimes(date):
-    url = f"{WEBSITE}/index.php/api/booking/times?time=all&{date}&holes=all&players=0&booking_class=929&schedule_id=1470&schedule_ids%5B%5D=1470&schedule_ids%5B%5D=1490&specials_only=0&api_key=no_limits"
+    url = f"{WEBSITE}/index.php/api/booking/times?time=all&{date}&holes={HOLES}&players=0&booking_class=929&schedule_id=1470&schedule_ids%5B%5D=1470&schedule_ids%5B%5D=1490&specials_only=0&api_key=no_limits"
     response = requests.get(url)
     try:
         response.raise_for_status
@@ -63,14 +70,27 @@ def getOpenTeeTimes(date):
 
 
 def main():
-    print("running main()")
     userLogin(USERNAME, PASSWORD)
-    date = input("Enter the desired date to check for open tee times (MM-DD-YYYY)")
-    open_tee_times = getOpenTeeTimes(date)
-    if open_tee_times:
-        print("Open Times:")
-        for tee_time in open_tee_times:
-            print(tee_time)
+    while True:
+        print("\nMain Menu:")
+        print("1. Check date for open tee times")
+        print("2. PLACEHOLDER")
+        print("3. PLACEHOLDER")
+        print("4. Exit")
+        choice = input("Enter your choice (1-4):")
+        
+        if choice == "1":
+            date = input("Enter the desired date to check for open tee times (MM-DD-YYYY). Leave blank to check todays times.\n")
+            open_tee_times = getOpenTeeTimes(date)
+            if open_tee_times:
+                print("Open Times:")
+                for tee_time in open_tee_times:
+                    print(tee_time)
+        elif choice == "4":
+            print("Exiting...")
+            break
+        else:
+            print("Invalid selection. Please enter a number between 1-4.")
             
             
 if __name__ == "__main__":
