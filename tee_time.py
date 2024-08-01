@@ -1,6 +1,7 @@
 import sys
 import requests
 import datetime
+import json
 
 # user settings, modify in userconfig.txt for now. will eventually make this configurable via CLI
 # creating list object 'userconfig' and stripping whitespace
@@ -62,6 +63,8 @@ def getOpenTeeTimes(date):
     response = requests.get(url)
     try:
         response.raise_for_status
+        # need to prettify this json response object - it's UGLY!
+        # convert json into a dictionary object by assigning response to object
         open_tee_times = response.json()
         return open_tee_times
     except requests.exceptions.RequestException as e:
@@ -85,7 +88,8 @@ def main():
             if open_tee_times:
                 print("Open Times:")
                 for tee_time in open_tee_times:
-                    print(tee_time)
+                    # temporary prettification of dictionary object. TODO: improve readability
+                    print(json.dumps(open_tee_times, indent=4, sort_keys=True))
         elif choice == "4":
             print("Exiting...")
             break
